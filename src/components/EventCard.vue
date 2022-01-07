@@ -1,10 +1,13 @@
 <template>
   <router-link :to="{ name: 'EventDetails', params: { id: event.id } }">
     <article
-      class="box is-primary event column is-one-third is-clickable mx-auto"
+      class="box is-primary event column is-one-third is-clickable mx-auto my-2"
+      style="height: 30vh"
     >
-      <strong>{{ event.title }}</strong>
-      <p>@ {{ event.time }} - {{ event.date }}</p>
+      <div class="py-6">
+        <strong>{{ event.title }}</strong>
+        <p>@ {{ event.time }} - {{ event.date }}</p>
+      </div>
     </article>
   </router-link>
 </template>
