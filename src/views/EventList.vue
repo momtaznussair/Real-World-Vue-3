@@ -21,7 +21,7 @@
         >Next page</router-link
       >
       <ul class="pagination-list">
-        <li v-for="x in totalPages" :key="x" aria-label="Goto page 2">
+        <li v-for="x in totalPages" :key="x" :aria-label=" 'Goto page' + page">
           <router-link
             :to="{ name: 'EventList', query: { page: x } }"
             class="pagination-link"
