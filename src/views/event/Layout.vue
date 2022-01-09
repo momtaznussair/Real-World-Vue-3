@@ -46,7 +46,13 @@ export default {
         this.event = res.data;
       })
       .catch((err) => {
-        console.error(err);
+        if (err.response && err.response.status == 404) {
+          return this.$router.push({
+            name: "NotFoundResource",
+            params: { resource: "event" },
+          });
+        }
+        this.$router.push({ name: "NetworkError" });
       });
   },
 };
