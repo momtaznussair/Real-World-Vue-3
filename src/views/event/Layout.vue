@@ -1,10 +1,10 @@
 <template>
   <article
-    v-if="event"
+    v-if="GStore.event"
     class="message is-primary column is-two-thirds is-narrow event mx-auto"
   >
     <div class="message-header">
-      <strong>{{ event.title }}</strong>
+      <strong>{{ GStore.event.title }}</strong>
     </div>
     <div class="message-body">
       <nav class="level">
@@ -26,34 +26,30 @@
           </router-link>
         </p>
       </nav>
-      <router-view :event="event" />
+      <router-view :event="GStore.event" />
     </div>
   </article>
 </template>
 
 <script>
-import EventService from "../../services/EventService";
 export default {
   props: ["id"],
-  data() {
-    return {
-      event: null,
-    };
-  },
-  created() {
-    EventService.getEvent(this.id)
-      .then((res) => {
-        this.event = res.data;
-      })
-      .catch((err) => {
-        if (err.response && err.response.status == 404) {
-          return this.$router.push({
-            name: "NotFoundResource",
-            params: { resource: "event" },
-          });
-        }
-        this.$router.push({ name: "NetworkError" });
-      });
-  },
+  inject: ["GStore"],
 };
+
+//  created() {
+//     EventService.getEvent(this.id)
+//       .then((res) => {
+//         this.event = res.data;
+//       })
+//       .catch((err) => {
+//         if (err.response && err.response.status == 404) {
+//           return this.$router.push({
+//             name: "NotFoundResource",
+//             params: { resource: "event" },
+//           });
+//         }
+//         this.$router.push({ name: "NetworkError" });
+//       });
+//   },
 </script>

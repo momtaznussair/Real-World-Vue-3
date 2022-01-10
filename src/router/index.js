@@ -6,6 +6,9 @@ import EventRegister from "../views/event/Register.vue";
 import EventEdit from "../views/event/Edit.vue";
 import NotFound from "../views/NotFound.vue";
 import NetworkError from "../views/NetworkError.vue";
+import NProgress from "nprogress";
+import EventService from "@/services/EventService";
+import GStore from "@/store";
 
 const routes = [
   {
@@ -31,6 +34,21 @@ const routes = [
   {
     path: "/events/:id",
     name: "EventLayout",
+    beforeEnter: (to) => {
+      return EventService.getEvent(to.params.id)
+        .then((res) => {
+          GStore.event = res.data;
+        })
+        .catch((err) => {
+          if (err.response && err.response.status == 404) {
+            return {
+              name: "NotFoundResource",
+              params: { resource: "event" },
+            };
+          }
+          return { name: "NetworkError" };
+        });
+    },
     props: true,
     component: EventLayout,
     children: [
@@ -47,6 +65,7 @@ const routes = [
       {
         path: "edit",
         name: "EventEdit",
+        meta: { requireAuthorization: true },
         component: EventEdit,
       },
     ],
@@ -78,7 +97,31 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return { top: 0 };
+  },
   routes,
+});
+router.beforeEach((to, from) => {
+  NProgress.start();
+  const notAuthorized = true;
+  if (to.meta.requireAuthorization && notAuthorized) {
+    GStore.flashMessage = "You are not authorized to view this page.";
+    setTimeout(() => {
+      GStore.flashMessage = "";
+    }, 3000);
+    if (from.href) {
+      return false;
+    }
+    return "/";
+  }
+});
+
+router.afterEach(() => {
+  NProgress.done();
 });
 
 export default router;
